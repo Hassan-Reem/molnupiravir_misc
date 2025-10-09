@@ -3,11 +3,21 @@ import gzip
 import subprocess
 import tqdm
 import pandas as pd
+import csv
+
 
 def read_fasta_batches(fasta_file, exclude_if_name_is_in, batch_size=1000):
     batch = []
-    with open(fasta_file, 'rt') as f:
-        for record in SeqIO.parse(f, 'fasta'):
+    cmd = 'xz -d -T0 -c "/Users/reem/Downloads/sequences_fasta_2025_09_21.tar.xz" | tar -xOf - sequences.fasta'
+
+    stream =  subprocess.Popen(
+        cmd,
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True 
+    ) 
+    for record in SeqIO.parse(stream.stdout, 'fasta'):
             if record.name in exclude_if_name_is_in:
                 continue
             batch.append(record)
@@ -32,23 +42,35 @@ def append_results_from_a_to_b(a,b, starting_from_scratch):
 
 target_filename = "final_results.tsv"
 starting_from_scratch = False
-seqNames = []
+# seqNames = []
+seqNames=set()
+
+# try:
+#     results_so_far = pd.read_csv(target_filename,delimiter="\t")
+#     seqNames = results_so_far['seqName'].tolist() 
+# except FileNotFoundError:
+#     starting_from_scratch = True
+
+# seqNames = set(seqNames)
 try:
-    results_so_far = pd.read_csv(target_filename,delimiter="\t")
-    seqNames = results_so_far['seqName'].tolist() 
+    with open(target_filename, 'r') as f:
+        reader = csv.DictReader(f, delimiter='\t')
+        for row in reader:
+            seqNames.add(row['seqName'])
 except FileNotFoundError:
     starting_from_scratch = True
 
-seqNames = set(seqNames)
-
 
 filename = "/Users/Reem/Downloads/sequences.fasta"
-batch_size = 10e3
+batch_size = 1000
 very_total = 17e6
 remaining = very_total - len(seqNames)
+
 iterator = read_fasta_batches(filename, seqNames, batch_size= batch_size)
-for batch in tqdm.tqdm(iterator, total=remaining / batch_size):
+for batch in tqdm.tqdm(iterator, total= remaining / batch_size):
     write_batch_to_fasta(batch, "batch.fa")
     subprocess.check_call("nextclade run batch.fa --output-tsv temp.tsv --dataset-name sars-cov-2", shell=True)
     append_results_from_a_to_b("temp.tsv", target_filename, starting_from_scratch)
     starting_from_scratch = False
+
+    
