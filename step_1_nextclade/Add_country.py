@@ -27,7 +27,7 @@ mutation_types = probs_df["MutationType"].apply(lambda x: x.replace('→', '>'))
 # Group by country and calculate
 country_results = []
 
-for country, group in df_country.groupby("country"):
+for country, group in df.groupby("country"):
     # Get counts for this country
     country_counts = calculate_country_counts(group)
     
