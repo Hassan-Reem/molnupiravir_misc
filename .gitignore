@@ -1,3 +1,4 @@
 data/*
 # Ignore large TSVs
 step_1_nextclade/G>Acontext_LLRs_final.tsv
+.DS_Store
