@@ -42,21 +42,14 @@ def append_results_from_a_to_b(a,b, starting_from_scratch):
 
 target_filename = "final_results.tsv"
 starting_from_scratch = False
-# seqNames = []
-seqNames=set()
 
-# try:
-#     results_so_far = pd.read_csv(target_filename,delimiter="\t")
-#     seqNames = results_so_far['seqName'].tolist() 
-# except FileNotFoundError:
-#     starting_from_scratch = True
+seqNamesAlreadyProcessed=set()
 
-# seqNames = set(seqNames)
 try:
     with open(target_filename, 'r') as f:
         reader = csv.DictReader(f, delimiter='\t')
         for row in reader:
-            seqNames.add(row['seqName'])
+            seqNamesAlreadyProcessed.add(row['seqName'])
 except FileNotFoundError:
     starting_from_scratch = True
 
@@ -64,13 +57,15 @@ except FileNotFoundError:
 filename = "/Users/Reem/Downloads/sequences.fasta"
 batch_size = 1000
 very_total = 17e6
-remaining = very_total - len(seqNames)
+remaining = very_total - len(seqNamesAlreadyProcessed)
 
-iterator = read_fasta_batches(filename, seqNames, batch_size= batch_size)
+iterator = read_fasta_batches(filename, seqNamesAlreadyProcessed, batch_size= batch_size)
 for batch in tqdm.tqdm(iterator, total= remaining / batch_size):
     write_batch_to_fasta(batch, "batch.fa")
     subprocess.check_call("nextclade run batch.fa --output-tsv temp.tsv --dataset-name sars-cov-2", shell=True)
     append_results_from_a_to_b("temp.tsv", target_filename, starting_from_scratch)
+    for record in batch:
+        seqNamesAlreadyProcessed.add(record.name)
     starting_from_scratch = False
 
     
