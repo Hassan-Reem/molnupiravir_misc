@@ -40,7 +40,7 @@ def append_results_from_a_to_b(a,b, starting_from_scratch):
                     lines = lines[1:]
                 b_file.write("".join(lines))
 
-target_filename = "final_results.tsv"
+target_filename = "/Users/reem/Mov/final_results.tsv"
 starting_from_scratch = False
 
 seqNamesAlreadyProcessed=set()
