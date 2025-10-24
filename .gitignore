@@ -1,8 +1,27 @@
+HEAD
 temp.tsv
 batch.fa
 .DS_Store
+step_1_nextclade/.DS_Store
 temp.tsv
 GtoA_LLRs_final.tsv
 .vscode/settings.json
 step_1_nextclade/GtoA_LLRs_final.tsv
 
+=======
+step_1_nextclade/.DS_Store
+.DS_Store
+
+# Large data files
+*.fa
+*.tsv
+*.fasta
+*.fastq
+*.bam
+*.sam
+*.vcf
+*.csv
+*.gz
+*.zip
+*.tar
+*.tar.gz
