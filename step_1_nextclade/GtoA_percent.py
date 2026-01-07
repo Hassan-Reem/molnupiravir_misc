@@ -1,6 +1,6 @@
 import pandas as pd
 import os
-file = "/Users/reem/Mov/nextclade_results/final_results.tsv"
+file = "/Users/reem/Mov/final_llrs_with_sum.tsv"
 #df =pd.read_csv(file, delimiter="\t", low_memory=False)
 #print(df["seqName"])
 
@@ -19,11 +19,11 @@ def GtoA_percent(muts):
 chunk_size=1000
 chunk_reader=pd.read_csv(file, delimiter="\t", chunksize=chunk_size, low_memory=False)
 
+processed_chunks = []
 for chunk in chunk_reader:
-    df=chunk
     chunk= pd.DataFrame(chunk)
     chunk["G_to_A_%"] = chunk["privateNucMutations.unlabeledSubstitutions"].fillna("").apply(GtoA_percent)
-    #print(chunk[["seqName", "privateNucMutations.unlabeledSubstitutions", "G_to_A_%"]])
-    #break
-os.makedirs('~/Documents', exist_ok=True)
-chunk.to_csv('~/Documents/final.csv')
+    processed_chunks.append(chunk)
+
+final_dataframe = pd.concat(processed_chunks, ignore_index=True)
+final_dataframe.to_csv('/Users/reem/Documents/gtoa.csv')
