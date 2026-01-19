@@ -1,3 +1,9 @@
+"""This script calculates LLRs per substitution context (C>T, T>C, A>G) for each sequence based on their mutational spectra.
+   It uses a threshold LLR of 6 to separate sequences into two groups (likely Molnupiravir-treated vs. likely non-treated), 
+   computes mean proportions for each group, and then calculates LLRs for each sequence using these means.
+   (Similar to All_llrs.ipynb but as a standalone script)."""
+
+
 import pandas as pd
 import os
 import tqdm
@@ -14,19 +20,19 @@ df = pd.concat([chunk for chunk in tqdm.tqdm(iterator, desc='Loading data')])
 
 
 #Get Counts per substitution context
+def count_GtoA(spectrum):
+    counts = Counter()
+    muts = spectrum.split(",")
+    for mut in muts:
+        if mut[2:5] == 'G>A':
+            counts[mut]+=1
+    return counts
+
 def count_CtoT(spectrum):
     counts = Counter()
     muts = spectrum.split(",")
     for mut in muts:
         if mut[2:5] == 'C>T':
-            counts[mut]+=1
-    return counts
-
-def count_TtoC(spectrum):
-    counts = Counter()
-    muts = spectrum.split(",")
-    for mut in muts:
-        if mut[2:5] == 'T>C':
             counts[mut]+=1
     return counts
 
@@ -38,7 +44,7 @@ def count_AtoG(spectrum):
             counts[mut]+=1
     return counts
 
-df["T>C_counts"] = df["spectrum"].apply(count_TtoC)
+df["G>A_counts"] = df["spectrum"].apply(count_GtoA)
 df["C>T_counts"] = df["spectrum"].apply(count_CtoT)
 df["A>G_counts"] = df["spectrum"].apply(count_AtoG)
 
@@ -51,7 +57,7 @@ def get_proportion(df):
        
     return dict
 
-df["T>C_proportions"] = df.apply(lambda row: get_proportion(row["T>C_counts"]), axis=1)
+df["G>A_proportions"] = df.apply(lambda row: get_proportion(row["G>A_counts"]), axis=1)
 
 df["C>T_proportions"] = df.apply(lambda row: get_proportion(row["C>T_counts"]), axis=1)
 
@@ -65,7 +71,7 @@ df_low_llrs = df[df["LLR"]>6]
 df_low_llrs.tail()
 
 #Create a pivot table for each mutational context per substitution:
-proportions_list_high = pd.json_normalize(df_high_llrs['T>C_proportions'])
+proportions_list_high = pd.json_normalize(df_high_llrs['C>T_proportions'])
 proportions_list_high.index = df_high_llrs.index 
 proportions_list_high.head()
 #Concatenate seqName and LLR from old df to pivot table
@@ -91,7 +97,7 @@ print(df_Mov.tail())
 df_Mov.to_csv("Mov_means.tsv",sep = "\t")
 
 # Repeat the same process for LLRs < 6 (Likely Non-Mov seqs)
-proportions_list_low = pd.json_normalize(df_low_llrs['proportions'])
+proportions_list_low = pd.json_normalize(df_low_llrs['C>T_proportions'])
 proportions_list_low.index = df_low_llrs.index 
 proportions_list_low.head()
 
