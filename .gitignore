@@ -30,3 +30,4 @@ step_2_nextclade/unmatched.txt
 step_1_nextclade/Merge_LLRs.ipynb
 step_1_nextclade/Merge_LLRs.ipynb
 step_1_nextclade/.vscode/settings.json
+.DS_Store
