@@ -8,7 +8,7 @@ import csv
 
 def read_fasta_batches(fasta_file, exclude_if_name_is_in, batch_size=1000):
     batch = []
-    cmd = 'xz -d -T0 -c "/Users/reem/Downloads/sequences_fasta_2025_09_21.tar.xz" | tar -xOf - sequences.fasta'
+    cmd = 'xz -d -T0 -c "/Users/reem/Downloads/sequences_fasta_2026_01_13.tar.xz" | tar -xOf - sequences.fasta'
 
     stream =  subprocess.Popen(
         cmd,
@@ -27,6 +27,8 @@ def read_fasta_batches(fasta_file, exclude_if_name_is_in, batch_size=1000):
     if batch:
         yield batch
 
+
+
 def write_batch_to_fasta(batch, output_file):
     with open(output_file, 'w') as f:
         SeqIO.write(batch, f, 'fasta')
@@ -40,7 +42,7 @@ def append_results_from_a_to_b(a,b, starting_from_scratch):
                     lines = lines[1:]
                 b_file.write("".join(lines))
 
-target_filename = "/Users/reem/Mov/final_results.tsv"
+target_filename = "/Users/reem/Mov/final_results_2026.tsv"
 starting_from_scratch = False
 
 seqNamesAlreadyProcessed=set()
@@ -55,7 +57,7 @@ except FileNotFoundError:
 
 
 filename = "/Users/Reem/Downloads/sequences.fasta"
-batch_size = 1000
+batch_size = 100
 very_total = 17e6
 remaining = very_total - len(seqNamesAlreadyProcessed)
 

@@ -39,11 +39,11 @@ def process_chunk(chunk):
     return chunk
 
 
-input_tsv = "/Users/reem/Mov/nextclade_results/final_results.tsv"
-output_tsv="/Users/reem/Mov/nextclade_results/ll_final_results.tsv"
+input_tsv = "/Users/reem/Mov/final_results_2026.tsv"
+output_tsv="/Users/reem/Mov/nextclade_results/llr_final_results_2026.tsv"
 
 first_chunk=True
-chunk_size = 10000 
+chunk_size = 10000      
 
 for chunk in pd.read_csv(input_tsv, delimiter="\t",chunksize=chunk_size):
     processed = process_chunk(chunk)
