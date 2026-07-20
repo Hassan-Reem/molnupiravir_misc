@@ -3,8 +3,6 @@ import numpy as np
 from collections import Counter
 from scipy.stats import multinomial
 import subprocess
-import tqdm
-import csv
 
 
 probs_df=pd.read_csv("/Users/reem/Downloads/estimated_mutation_distribution.tsv", delimiter="\t")

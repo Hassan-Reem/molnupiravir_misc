@@ -13,10 +13,10 @@ Pipeline stages:
   7. Threshold sum_llrs to produce final MOV call set
 """
 
+from collections import Counter
 import numpy as np
 import pandas as pd
 import tqdm
-from collections import Counter
 from scipy.stats import multinomial
 from Bio import Entrez, SeqIO
 
