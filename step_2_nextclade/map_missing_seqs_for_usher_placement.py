@@ -8,7 +8,7 @@ import csv
 """
 Extracts FASTA sequences not present in the UShER phylogenetic tree based on
 a list of unmatched sequence identifiers (unmatched.txt), and outputs them in batches for
-subsequent addition using UShER.
+subsequent addition using the UShER placement pipeline.
 """
 
 
